@@ -219,7 +219,7 @@ Content text ---------------------------------
 		color: #746b6b;
 	}
 	.areatxt {
-		font-size: 15px;
+		font-size: 16.5px;
 		width: 27rem;
 		height: 12rem;
 	}
@@ -317,7 +317,7 @@ Content text ---------------------------------
 		font: 300 13px "Keep Calm", sans-serif;
 	}
 	.areatxt {
-		font-size: 19px;
+		font-size: 18px;
 		width: 27rem;
 		height: 12rem;
 	}
@@ -385,8 +385,7 @@ Content text ---------------------------------
 		font: 20px "Keep Calm", sans-serif;
 	}
 }
-
-@media (max-width: 529px) {
+@media (max-width: 549px) {
 	body {
 		font-size: 16px;
 	}
