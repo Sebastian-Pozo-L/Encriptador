@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function encryptEvent() {
 	const textoencryp = accionEncrypt();
+	if (!textoencryp) return;
 	if (firstClick) {
 		hiddenContentEvent();
 		firstClick = false; // Cambia la bandera para evitar que se ejecute nuevamente
@@ -32,6 +33,7 @@ function encryptEvent() {
 }
 function desencryptEvent() {
 	const textodesencryp = accionDecrypt();
+	if (!textodesencryp) return;
 	if (firstClick) {
 		hiddenContentEvent();
 		firstClick = false; // Cambia la bandera para evitar que se ejecute nuevamente
@@ -43,25 +45,27 @@ function desencryptEvent() {
 	saveDataText("decrypt", textodesencryp);
 }
 function accionEncrypt() {
-	let texto = document.getElementById("txt");
-	let textoencryp = texto.value
+	let texto = document.getElementById("txt").value;
+	if (texto === "") return null;
+	const textoencryp = texto
 		.replace(/e/g, "enter")
 		.replace(/i/g, "imes")
 		.replace(/a/g, "ai")
 		.replace(/o/g, "ober")
 		.replace(/u/g, "ufat");
-	texto.value = "";
+	document.getElementById("txt").value = "";
 	return textoencryp;
 }
 function accionDecrypt() {
-	let texto = document.getElementById("txt");
-	const textodesencryp = texto.value
+	let texto = document.getElementById("txt").value;
+	if (texto === "") return null;
+	const textodesencryp = texto
 		.replace(/enter/g, "e")
 		.replace(/imes/g, "i")
 		.replace(/ai/g, "a")
 		.replace(/ober/g, "o")
 		.replace(/ufat/g, "u");
-	texto.value = "";
+	document.getElementById("txt").value = "";
 	return textodesencryp;
 }
 function hiddenContentEvent() {
@@ -108,7 +112,7 @@ function messageAlert() {
 		boxAlert.className = "box-alert";
 		boxAlert.id = "box-alert";
 		boxAlert.innerHTML = `<img src="images/notification.png" alt="Circulo de exclamación"/>
-	<br> <p>Puedes seleccionar el texto que desees copiar o eliminar para usar el algoritmo de encriptado o desencriptado</p>`;
+	<br> <p>Puedes seleccionar el texto que desees copiar o eliminar para usar el algoritmo de encriptado o desencriptado.</p>`;
 		sendAlert.appendChild(boxAlert);
 		setTimeout(() => {
 			boxAlert.classList.add("appear");
