@@ -18,12 +18,33 @@ document.addEventListener("DOMContentLoaded", () => {
 	originalclasstxt = cntTxt.className;
 });
 
+document.getElementById("txt").addEventListener("paste", function (event) {
+	// Prevenir el comportamiento por defecto del pegado
+	event.preventDefault();
+	// Obtener el texto pegado desde el portapapeles
+	let pasteText = (event.clipboardData || event.originalEvent.clipboardData).getData("text");
+	// Filtrar el texto para permitir solo letras minúsculas, espacios y "ñ"
+	pasteText = pasteText.replace(/[^a-zñ ]/g, "");
+	// Insertar el texto filtrado directamente en el textarea
+	const txtArea = document.getElementById("txt");
+	const start = txtArea.selectionStart;
+	const end = txtArea.selectionEnd;
+	// Insertar el texto pegado en la posición del cursor
+	const textBefore = txtArea.value.substring(0, start);
+	const textAfter = txtArea.value.substring(end);
+	txtArea.value = textBefore + pasteText + textAfter;
+	// Mover el cursor al final del texto pegado
+	txtArea.setSelectionRange(start + pasteText.length, start + pasteText.length);
+});
+
+//encryptEvent(): Ejecuta la acción de encriptar el texto ingresado,
+//muestra un mensaje de alerta y guarda el texto encriptado.
 function encryptEvent() {
 	const textoencryp = accionEncrypt();
 	if (!textoencryp) return;
 	if (firstClick) {
 		hiddenContentEvent();
-		firstClick = false; // Cambia la bandera para evitar que se ejecute nuevamente
+		firstClick = false;
 	}
 	if (!alertShown) {
 		messageAlert();
@@ -31,12 +52,14 @@ function encryptEvent() {
 	}
 	saveDataText("encrypt", textoencryp);
 }
+//desencryptEvent(): Ejecuta la acción de desencriptar el texto ingresado,
+//muestra un mensaje de alerta y guarda el texto desencriptado.
 function desencryptEvent() {
 	const textodesencryp = accionDecrypt();
 	if (!textodesencryp) return;
 	if (firstClick) {
 		hiddenContentEvent();
-		firstClick = false; // Cambia la bandera para evitar que se ejecute nuevamente
+		firstClick = false;
 	}
 	if (!alertShown) {
 		messageAlert();
@@ -44,6 +67,7 @@ function desencryptEvent() {
 	}
 	saveDataText("decrypt", textodesencryp);
 }
+//accionEncrypt(): Encripta el texto reemplazando las vocales con ciertos patrones de caracteres
 function accionEncrypt() {
 	let texto = document.getElementById("txt").value;
 	if (texto === "") return null;
@@ -56,6 +80,8 @@ function accionEncrypt() {
 	document.getElementById("txt").value = "";
 	return textoencryp;
 }
+//accionDecrypt(): Desencripta el texto reemplazando los patrones
+//de caracteres con sus respectivas vocales originales.
 function accionDecrypt() {
 	let texto = document.getElementById("txt").value;
 	if (texto === "") return null;
@@ -68,6 +94,8 @@ function accionDecrypt() {
 	document.getElementById("txt").value = "";
 	return textodesencryp;
 }
+//hiddenContentEvent(): Oculta el contenido original y prepara
+//el contenedor para mostrar el texto encriptado o desencriptado.
 function hiddenContentEvent() {
 	const cntTextHidden = document.getElementById("cnt-txt");
 
@@ -82,15 +110,17 @@ function hiddenContentEvent() {
 		cntTextHidden.appendChild(dataText);
 	}
 }
+//saveDataText(action, text): Crea un botón con el texto encriptado
+//o desencriptado, permitiendo seleccionarlo para copiar o eliminar.
 function saveDataText(action, text) {
 	const saveData = document.getElementById("cnt-datatext");
 	const boxDataText = document.createElement("button");
 	boxDataText.className = "box-text";
 	const spantext = document.createElement("span");
 	if (action === "encrypt") {
-		spantext.innerHTML = text; // Usa el texto encriptado
+		spantext.innerHTML = text;
 	} else if (action === "decrypt") {
-		spantext.innerHTML = text; // Usa el texto desencriptado
+		spantext.innerHTML = text;
 	}
 	boxDataText.appendChild(spantext);
 	saveData.appendChild(boxDataText);
@@ -105,6 +135,7 @@ function saveDataText(action, text) {
 	});
 	showExtraButtons();
 }
+//messageAlert(): Muestra una alerta visual con un mensaje sobre las acciones disponibles.
 function messageAlert() {
 	if (!document.getElementById("box-alert")) {
 		const sendAlert = document.getElementById("main-container");
@@ -120,6 +151,8 @@ function messageAlert() {
 		messageAlertTimedOut();
 	}
 }
+//messageAlertTimedOut(): Controla el tiempo de visibilidad de la alerta,
+//haciendo que desaparezca tras un periodo.
 function messageAlertTimedOut() {
 	const contador = document.getElementById("box-alert");
 	setTimeout(() => {
@@ -130,6 +163,7 @@ function messageAlertTimedOut() {
 		}, 2000);
 	}, 6000);
 }
+//createBottonErase(): Crea un botón de eliminar que permite eliminar el texto seleccionado.
 function createBottonErase() {
 	const createBtnErase = document.getElementById("buttons");
 	const btnErase = document.createElement("button");
@@ -141,11 +175,12 @@ function createBottonErase() {
 	btnErase.addEventListener("click", function () {
 		if (selectedButton) {
 			selectedButton.remove();
-			selectedButton = null; // Reiniciar la selección después de eliminar el botón
-			showExtraButtons(); // Actualiza los botones extra
+			selectedButton = null;
+			showExtraButtons();
 		}
 	});
 }
+//createButtonCopy(): Crea un botón de copiar que copia el contenido del texto seleccionado al portapapeles.
 function createButtonCopy() {
 	const createBtnCopy = document.getElementById("buttons");
 	const btnCopy = document.createElement("button");
@@ -161,6 +196,7 @@ function createButtonCopy() {
 		}
 	});
 }
+//showExtraButtons(): Verifica si hay texto disponible y, si es así, muestra los botones de copiar y eliminar.
 function showExtraButtons() {
 	const showButtons = document.getElementsByClassName("box-text");
 	const eraseButton = document.getElementById("erase");
@@ -179,6 +215,7 @@ function showExtraButtons() {
 		firstClick = true;
 	}
 }
+//removeButtons(): Elimina los botones de copiar y eliminar cuando no hay texto seleccionado.
 function removeButtons() {
 	const removeErase = document.getElementById("erase");
 	const removeCopy = document.getElementById("copy");
@@ -189,6 +226,8 @@ function removeButtons() {
 		removeCopy.remove();
 	}
 }
+//restoreOriginalState(): Restaura el estado original del contenedor de texto
+//si no hay texto encriptado o desencriptado.
 function restoreOriginalState() {
 	const backupContent = document.getElementById("cnt-txt");
 	if (backupContent) {
